@@ -1,0 +1,39 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function logueado() { return request.auth != null; }
+    function existePerfil() { return exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)); }
+    function perfil() { return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data; }
+    function activo() { return logueado() && existePerfil() && perfil().estado == 'Activo'; }
+    function esAdmin() { return activo() && perfil().rol == 'Administrador'; }
+    // Dueña del sistema: correo fijo y verificado (Google lo entrega verificado).
+    function esDuenio() { return logueado() && request.auth.token.email == 'catalinavallejos63@gmail.com' && request.auth.token.email_verified == true; }
+
+    match /usuarios/{id} {
+      allow read: if esAdmin() || (logueado() && request.auth.uid == id);
+      // Cada persona crea su propio perfil como "Usuario". Solo la dueña puede crearse como Administrador.
+      allow create: if esAdmin() || (logueado() && request.auth.uid == id && request.resource.data.estado == 'Activo'
+        && (request.resource.data.rol == 'Usuario' || (request.resource.data.rol == 'Administrador' && esDuenio())));
+      allow update: if esAdmin() || (esDuenio() && request.auth.uid == id && request.resource.data.rol == 'Administrador' && request.resource.data.estado == 'Activo');
+      allow delete: if esAdmin();
+    }
+
+    // El comprador solo ve el catálogo; el administrador hace todo.
+    match /productos/{id} { allow read: if activo(); allow write: if esAdmin(); }
+    match /proveedores/{id} { allow read, write: if esAdmin(); }
+    match /lotes/{id} { allow read, write: if esAdmin(); }
+    match /movimientos/{id} { allow read, write: if esAdmin(); }
+
+    // Pedidos de compra: el comprador crea los suyos (siempre "Pendiente") y solo ve los propios.
+    match /pedidos/{id} {
+      allow read: if esAdmin() || (activo() && resource.data.uid == request.auth.uid);
+      allow create: if activo() && request.resource.data.uid == request.auth.uid && request.resource.data.estado == 'Pendiente'
+        && request.resource.data.items is list && request.resource.data.items.size() > 0 && request.resource.data.items.size() <= 50
+        && request.resource.data.total is number && request.resource.data.total > 0;
+      allow update, delete: if esAdmin();
+    }
+
+    // Datos del negocio (WhatsApp, Yape, cuenta): los ve cualquier usuario activo, los edita el administrador.
+    match /config/{id} { allow read: if activo(); allow write: if esAdmin(); }
+  }
+}

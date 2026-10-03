@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Iniciar sesión · Control de Insumos y Lotes</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="login">
+  <section class="brand"><h1>Control de Insumos y Lotes</h1><p>Seguridad y calidad en cada proceso</p></section>
+  <section class="form">
+    <form id="f">
+      <h1 id="titulo">Iniciar sesión</h1>
+      <p id="sub" style="color:var(--m)">Ingresa tus credenciales para continuar</p>
+      <div id="aviso" class="msg" hidden>Abriste la página con doble clic (<b>file://</b>) y así el inicio de sesión no puede funcionar. Ábrela con un servidor local (VS Code &quot;Live Server&quot; o <code>npx serve</code>) o desde tu página de GitHub Pages.</div>
+      <label id="lNombre" hidden>Nombre completo<input type="text" name="nombre" autocomplete="name"></label>
+      <label>Correo electrónico<input type="email" name="correo" required autocomplete="username"></label>
+      <label>Contraseña
+        <span class="pw"><input type="password" name="clave" id="clave" required autocomplete="current-password"><button type="button" class="ver" id="ver">Mostrar</button></span>
+      </label>
+      <small class="ayuda" id="ayuda" hidden>Mínimo 8 caracteres, con letras y números.</small>
+      <label id="lClave2" hidden>Repite la contraseña<input type="password" name="clave2" autocomplete="new-password"></label>
+      <button class="btn" id="enviar" style="width:100%">Iniciar sesión</button>
+      <p style="text-align:center;margin:12px 0 0"><a href="#" class="link" id="olvide">¿Olvidaste tu contraseña?</a></p>
+      <div class="o">o</div>
+      <button type="button" id="google" class="btn out gbtn"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.2 5.4-4.7 7.1l7.6 5.9c4.4-4.1 6.9-10.1 6.9-17.5z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 0 1 0-9.4l-7.9-6.1a24 24 0 0 0 0 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Continuar con Google</button>
+      <p style="text-align:center;margin-top:16px"><span id="pregunta">¿Eres cliente y no tienes cuenta?</span> <a href="#" class="link" id="alt">Crear cuenta</a></p>
+      <div id="msg"></div>
+    </form>
+  </section>
+</div>
+<script>if (location.protocol === "file:") document.getElementById("aviso").hidden = false;</script>
+<script type="module" src="js/login.js"></script>
+</body>
+</html>
