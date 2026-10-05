@@ -1,4 +1,4 @@
-import { login, loginGoogle, registrar, recuperar, logout, perfil } from "./services/auth.js";
+import { login, loginGoogle, registrar, recuperar, logout, perfil, fijarSesion, onSesion } from "./services/auth.js";
 const $ = id => document.getElementById(id), f = $("f"), msg = $("msg");
 let registro = false, ocupado = false;
 
@@ -29,6 +29,7 @@ async function entrar(fn) {
   if (ocupado) return;
   mostrar(""); bloquear(true);
   try {
+    await fijarSesion($("recordar").checked); // antes de iniciar sesión
     const c = await fn(), p = await perfil(c.user);
     if (p.estado !== "Activo") { await logout(); bloquear(false); return mostrar("Tu usuario está desactivado. Contacta al administrador."); }
     mostrar(`Bienvenido/a, ${p.nombre}. Entrando como ${p.rol}…`, true);
@@ -67,3 +68,9 @@ $("olvide").onclick = async e => {
   try { await recuperar(f.correo.value); mostrar("Si ese correo tiene cuenta, te enviamos un enlace para restablecer la contraseña.", true); }
   catch (er) { mostrar(texto(er)); }
 };
+
+// Si ya hay una sesión guardada en este dispositivo, entra directo sin pedir la contraseña.
+onSesion(async u => {
+  if (!u || ocupado) return;
+  try { const p = await perfil(u); if (p.estado === "Activo") location.replace("app.html"); } catch (e) { console.error(e); }
+});

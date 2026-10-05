@@ -2,7 +2,7 @@ import { auth } from "../config/firebase.js";
 import { firebaseConfig } from "../config/firebase-config.js";
 import { obtener, guardar } from "./db.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendEmailVerification, sendPasswordResetEmail, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendEmailVerification, sendPasswordResetEmail, updateProfile, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 // Esta cuenta (con el correo verificado) es siempre Administrador. Las reglas de Firestore lo vuelven a comprobar en el servidor.
 export const ADMIN_EMAIL = "catalinavallejos63@gmail.com";
@@ -14,6 +14,9 @@ export function validarClave(c) {
     const e = new Error("La contraseña debe tener mínimo 8 caracteres, con letras y números."); e.code = "clave-debil"; throw e;
   }
 }
+// "Recordar este dispositivo": la sesión queda guardada en el navegador y no se cierra hasta que pulses «Cerrar sesión».
+// Si no se marca, la sesión se borra al cerrar la pestaña/navegador (útil en equipos compartidos).
+export const fijarSesion = recordar => setPersistence(auth, recordar ? browserLocalPersistence : browserSessionPersistence);
 export const login = (correo, clave) => signInWithEmailAndPassword(auth, correo.trim(), clave);
 export const loginGoogle = () => { const p = new GoogleAuthProvider(); p.setCustomParameters({ prompt: "select_account" }); return signInWithPopup(auth, p); };
 export const recuperar = correo => sendPasswordResetEmail(auth, correo.trim());

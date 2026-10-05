@@ -1,6 +1,6 @@
 import { listarDe } from "../services/db.js";
 import { cargarNegocio, urlWA, PASOS, ETQ, COLOR, itemsDe } from "../services/negocio.js";
-import { esc, badge, fecha, soles } from "../ui.js";
+import { esc, badge, fecha, soles, filtros, conectarFiltros, norm } from "../ui.js";
 export async function render(root, yo) {
   const [lista, neg] = await Promise.all([listarDe("pedidos", "uid", yo.uid), cargarNegocio()]);
   const ps = lista.sort((a, b) => b.fecha.localeCompare(a.fecha));
@@ -14,5 +14,11 @@ export async function render(root, yo) {
     <p>${itemsDe(p).map(i => `${i.cantidad} × ${esc(i.producto)}${i.precio ? ` — ${soles(i.precio * i.cantidad)}` : ""}`).join("<br>")}</p>
     <p><b>Total: ${soles(p.total)}</b></p>${pasos}${wa ? `<a class="mini" target="_blank" rel="noopener" href="${wa}">Escribir por WhatsApp</a>` : ""}</div>`;
   };
-  root.innerHTML = `<div class="head"><h1>Mis pedidos</h1><a class="btn" href="#catalogo">Ir al catálogo</a></div>${ps.length ? ps.map(tarjeta).join("") : '<div class="card"><p class="empty">Aún no tienes pedidos.</p></div>'}`;
+  root.innerHTML = `<div class="head"><h1>Mis pedidos</h1><a class="btn" href="#catalogo">Ir al catálogo</a></div>${ps.length ? filtros({ ph: "Buscar por producto...", selects: [{ k: "est", l: "Estado", opts: [...PASOS, "Rechazado"] }] }) : ""}<div id="t"></div>`;
+  const t = root.querySelector("#t");
+  if (!ps.length) { t.innerHTML = '<div class="card"><p class="empty">Aún no tienes pedidos.</p></div>'; return; }
+  conectarFiltros(root, f => {
+    const l = ps.filter(p => (!f.est || p.estado === f.est) && norm(itemsDe(p).map(i => i.producto).join(" ")).includes(norm(f.q)));
+    t.innerHTML = l.length ? l.map(tarjeta).join("") : '<div class="card"><p class="empty">Sin resultados</p></div>';
+  });
 }

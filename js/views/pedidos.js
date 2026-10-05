@@ -1,11 +1,16 @@
 import { listar, obtener, actualizar, crear, increment } from "../services/db.js";
-import { ETQ, COLOR, itemsDe } from "../services/negocio.js";
-import { esc, badge, table, toast, confirmar, fecha, soles } from "../ui.js";
+import { ETQ, COLOR, METODOS, itemsDe } from "../services/negocio.js";
+import { esc, badge, table, toast, confirmar, fecha, soles, filtros, conectarFiltros, norm } from "../ui.js";
 const SIG = { Pendiente: ["Confirmado", "Confirmar pago"], Confirmado: ["En preparación", "A preparación"], "En preparación": ["Entregado", "Marcar entregado"] };
 export async function render(root) {
   const ps = (await listar("pedidos")).sort((a, b) => b.fecha.localeCompare(a.fecha));
-  root.innerHTML = `<h1>Pedidos de clientes</h1>${table(["Fecha", "Cliente", "Pedido", "Total", "Pago", "Estado", "Acciones"], ps.map(p => [fecha(p.fecha), `${esc(p.nombre)}<br><small>${esc(p.telefono || "")} · ${esc(p.direccion || "")}</small>`, itemsDe(p).map(i => `${i.cantidad} × ${esc(i.producto)}`).join("<br>"), soles(p.total), `${esc(p.metodoPago || "—")}<br><small>${esc(p.canal || "")}</small>`, badge(ETQ[p.estado] || p.estado, COLOR[p.estado] || "a"), SIG[p.estado] ? `<button class="mini" data-a="s" data-id="${p.id}">${SIG[p.estado][1]}</button>${p.estado === "Pendiente" ? ` <button class="mini red" data-a="r" data-id="${p.id}">Rechazar</button>` : ""}` : ""]))}`;
-  root.querySelector("table").onclick = async e => {
+  root.innerHTML = `<h1>Pedidos de clientes</h1>${filtros({ ph: "Buscar por cliente o producto...", selects: [{ k: "est", l: "Estado", opts: Object.keys(ETQ) }, { k: "pago", l: "Método de pago", opts: METODOS }] })}<div id="t"></div>`;
+  const t = root.querySelector("#t");
+  conectarFiltros(root, f => {
+    const l = ps.filter(p => norm((p.nombre || "") + " " + itemsDe(p).map(i => i.producto).join(" ")).includes(norm(f.q)) && (!f.est || p.estado === f.est) && (!f.pago || p.metodoPago === f.pago));
+    t.innerHTML = table(["Fecha", "Cliente", "Pedido", "Total", "Pago", "Estado", "Acciones"], l.map(p => [fecha(p.fecha), `${esc(p.nombre)}<br><small>${esc(p.telefono || "")} · ${esc(p.direccion || "")}</small>`, itemsDe(p).map(i => `${i.cantidad} × ${esc(i.producto)}`).join("<br>"), soles(p.total), `${esc(p.metodoPago || "—")}<br><small>${esc(p.canal || "")}</small>`, badge(ETQ[p.estado] || p.estado, COLOR[p.estado] || "a"), SIG[p.estado] ? `<button class="mini" data-a="s" data-id="${p.id}">${SIG[p.estado][1]}</button>${p.estado === "Pendiente" ? ` <button class="mini red" data-a="r" data-id="${p.id}">Rechazar</button>` : ""}` : ""]));
+  });
+  t.onclick = async e => {
     const b = e.target.closest("button"); if (!b) return; const p = ps.find(x => x.id === b.dataset.id), ahora = new Date().toISOString();
     const hist = est => [...(p.historial || []), { estado: est, fecha: ahora }];
     try {
