@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 840" preserveAspectRatio="xMidYMid slice">
+<defs>
+<linearGradient id="cielo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0B3F31"/><stop offset=".55" stop-color="#1B7A55"/><stop offset="1" stop-color="#E9C46A"/></linearGradient>
+<radialGradient id="sol" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFF3C4"/><stop offset=".35" stop-color="#F6D77A" stop-opacity=".9"/><stop offset="1" stop-color="#F6D77A" stop-opacity="0"/></radialGradient>
+<linearGradient id="c1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2E8B57"/><stop offset="1" stop-color="#145C3E"/></linearGradient>
+<linearGradient id="c2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1F7A57"/><stop offset="1" stop-color="#0C4A37"/></linearGradient>
+<linearGradient id="c3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#136245"/><stop offset="1" stop-color="#073426"/></linearGradient>
+</defs>
+<rect width="960" height="840" fill="url(#cielo)"/>
+<circle cx="640" cy="430" r="230" fill="url(#sol)"/>
+<path d="M0 470 Q180 400 360 450 T720 440 T960 430 V840 H0Z" fill="url(#c1)"/>
+<path d="M0 540 Q240 470 480 520 T960 500 V840 H0Z" fill="url(#c2)"/>
+<g stroke="#3FA66F" stroke-opacity=".45" stroke-width="3" fill="none">
+<path d="M480 520 L60 840"/><path d="M480 520 L220 840"/><path d="M480 520 L380 840"/><path d="M480 520 L480 840"/><path d="M480 520 L580 840"/><path d="M480 520 L740 840"/><path d="M480 520 L900 840"/>
+</g>
+<path d="M0 640 Q300 580 620 630 T960 610 V840 H0Z" fill="url(#c3)" opacity=".92"/>
+<g fill="#7BD3A0" opacity=".85">
+<g id="p"><path d="M0 0 C-10-18-4-30 0-40 C4-30 10-18 0 0Z"/><path d="M0-8 C-16-14-24-26-26-36 C-12-34-4-22 0-8Z"/><path d="M0-8 C16-14 24-26 26-36 C12-34 4-22 0-8Z"/></g>
+<use href="#p" x="140" y="700"/><use href="#p" x="300" y="680" transform="translate(0 0)"/><use href="#p" x="470" y="705"/><use href="#p" x="640" y="690"/><use href="#p" x="810" y="710"/>
+<use href="#p" x="220" y="780"/><use href="#p" x="400" y="790"/><use href="#p" x="560" y="780"/><use href="#p" x="730" y="795"/><use href="#p" x="880" y="775"/>
+</g>
+<rect width="960" height="840" fill="#0B3F31" opacity=".28"/>
+</svg>
